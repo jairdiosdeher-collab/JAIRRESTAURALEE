@@ -1,0 +1,2594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JAIRRESTAURA IA DE ESTUDIO — Convierte cualquier documento en conocimiento inteligente</title>
+  <meta name="description" content="Plataforma educativa con inteligencia artificial capaz de transformar PDF, DOCX, TXT, EPUB y PPTX en cursos interactivos, cuestionarios, flashcards, mapas conceptuales y tutorías inteligentes." />
+  <meta name="theme-color" content="#2563EB" />
+  <meta property="og:title" content="JAIRRESTAURA IA DE ESTUDIO" />
+  <meta property="og:description" content="Plataforma educativa con inteligencia artificial capaz de transformar PDF, DOCX, TXT, EPUB y PPTX en cursos interactivos, cuestionarios, flashcards, mapas conceptuales y tutorías inteligentes." />
+  <meta property="og:type" content="website" />
+  <!-- Favicon Dinámico 🧠 -->
+  <link id="dynamicFavicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2224%22 fill=%22%232563EB%22/><text y=%22.88em%22 x=%2212%22 font-size=%2272%22>🧠</text></svg>" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Librerías en navegador 100% compatibles con GitHub Pages -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    :root {
+      /* Modo Claro */
+      --bg-primary: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --bg-elevated: #F1F5F9;
+      --bg-glass: rgba(255, 255, 255, 0.88);
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #64748B;
+      --border: #E2E8F0;
+      /* Colores Oficiales JAIRRESTAURA IA DE ESTUDIO */
+      --brand-primary: #2563EB;
+      --brand-secondary: #7C3AED;
+      --brand-accent: #06B6D4;
+      --brand-gradient: linear-gradient(135deg, #2563EB 0%, #7C3AED 55%, #06B6D4 100%);
+      --accent-soft: rgba(37, 99, 235, 0.1);
+      --amber: #D97706;
+      --emerald: #059669;
+      --rose: #E11D48;
+      --shadow-soft: 0 12px 32px -10px rgba(15, 23, 42, 0.08);
+      --shadow-floating: 0 20px 45px -12px rgba(15, 23, 42, 0.22);
+    }
+
+    body.dark {
+      /* Modo Oscuro */
+      --bg-primary: #0B0F17;
+      --bg-surface: #111827;
+      --bg-elevated: #1E293B;
+      --bg-glass: rgba(17, 24, 39, 0.88);
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --border: #1E293B;
+      --accent-soft: rgba(6, 182, 212, 0.14);
+      --shadow-soft: 0 12px 32px -10px rgba(0, 0, 0, 0.55);
+      --shadow-floating: 0 24px 48px -12px rgba(0, 0, 0, 0.75);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Public Sans', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.65;
+      transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+      padding-bottom: 120px;
+    }
+
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      letter-spacing: -0.02em;
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Barra Superior con Glassmorphism */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      min-height: 68px;
+      background: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 1.25rem;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    /* Logotipo Textual 🧠 JAIRRESTAURA / IA DE ESTUDIO */
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 13px;
+      background: var(--brand-gradient);
+      color: #ffffff;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+      flex-shrink: 0;
+    }
+
+    .brand-text-stack {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.02rem;
+      letter-spacing: -0.01em;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .brand-subtitle-tag {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--brand-primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    body.dark .brand-subtitle-tag {
+      color: var(--brand-accent);
+    }
+
+    .brand-slogan {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      border-left: 1px solid var(--border);
+      padding-left: 0.75rem;
+      margin-left: 0.25rem;
+    }
+
+    /* Botones Modernos */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      padding: 0.52rem 0.95rem;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.22s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      border-color: var(--brand-primary);
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: var(--brand-gradient);
+      color: #ffffff;
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.95;
+      border-color: transparent;
+    }
+
+    .btn-theme {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      font-weight: 700;
+      padding: 0.52rem 1rem;
+    }
+
+    .btn-audio-main {
+      background: var(--accent-soft);
+      color: var(--brand-primary);
+      border: 1px solid rgba(37, 99, 235, 0.35);
+      font-weight: 700;
+    }
+
+    body.dark .btn-audio-main {
+      color: var(--brand-accent);
+      border-color: rgba(6, 182, 212, 0.35);
+    }
+
+    .btn-amber {
+      background: rgba(217, 119, 6, 0.12);
+      color: var(--amber);
+      border-color: rgba(217, 119, 6, 0.35);
+    }
+
+    .btn-danger {
+      color: var(--rose);
+      border-color: rgba(225, 29, 72, 0.35);
+    }
+
+    /* Layout Principal */
+    .workspace {
+      display: grid;
+      grid-template-columns: 285px 1fr;
+      min-height: calc(100vh - 68px);
+    }
+
+    .sidebar {
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      padding: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      transition: background-color 0.35s ease, border-color 0.35s ease;
+    }
+
+    .sidebar-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 0.45rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .nav-item {
+      width: 100%;
+      text-align: left;
+      padding: 0.58rem 0.8rem;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.83rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.18s ease;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: var(--brand-gradient);
+      color: #ffffff;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
+    }
+
+    .main-area {
+      padding: 1.5rem 2rem;
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* Tarjetas Glassmorphism & Sombras Suaves */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.4rem;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 1.15rem;
+      transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .smart-reader-banner {
+      background: var(--bg-glass);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(37, 99, 235, 0.35);
+      border-radius: 14px;
+      padding: 0.85rem 1.15rem;
+      margin-bottom: 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.85rem;
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+      gap: 0.9rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.05rem;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .kpi-label {
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .kpi-value {
+      font-size: 1.38rem;
+      font-weight: 800;
+      margin-top: 0.25rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .dropzone {
+      border: 2px dashed var(--brand-primary);
+      background: var(--accent-soft);
+      border-radius: 18px;
+      padding: 2.2rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .dropzone:hover {
+      transform: translateY(-2px);
+      border-color: var(--brand-secondary);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.22rem 0.65rem;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--accent-soft);
+      color: var(--brand-primary);
+    }
+
+    body.dark .badge {
+      color: var(--brand-accent);
+    }
+
+    .section-pane { display: none; }
+    .section-pane.active { display: block; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 1rem;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 0.68rem 0.95rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 0.86rem;
+    }
+
+    /* Flashcards */
+    .flashcard-box {
+      min-height: 225px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      background: var(--bg-surface);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .flashcard-box:hover {
+      border-color: var(--brand-primary);
+      transform: translateY(-2px);
+    }
+
+    /* Quiz */
+    .quiz-opt {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      margin-top: 0.45rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      cursor: pointer;
+      font-size: 0.84rem;
+      transition: all 0.15s ease;
+    }
+
+    .quiz-opt.correct {
+      border-color: var(--emerald);
+      background: rgba(5, 150, 105, 0.14);
+      font-weight: 600;
+    }
+
+    .quiz-opt.wrong {
+      border-color: var(--rose);
+      background: rgba(225, 29, 72, 0.14);
+    }
+
+    /* Chat Tutor IA */
+    .chat-box {
+      height: 410px;
+      overflow-y: auto;
+      padding: 1rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-bottom: 0.85rem;
+    }
+
+    .chat-msg {
+      max-width: 85%;
+      padding: 0.9rem 1.1rem;
+      border-radius: 14px;
+      font-size: 0.87rem;
+      line-height: 1.65;
+      white-space: pre-line;
+    }
+
+    .chat-msg.user {
+      align-self: flex-end;
+      background: var(--brand-gradient);
+      color: #ffffff;
+    }
+
+    .chat-msg.assistant {
+      align-self: flex-start;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .chat-citations {
+      margin-top: 0.55rem;
+      padding-top: 0.45rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* 🎧 REPRODUCTOR FLOTANTE DE AUDIO (SIEMPRE VISIBLE) */
+    .floating-audio-player {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 8000;
+      width: 340px;
+      max-width: calc(100vw - 24px);
+      background: var(--bg-glass);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1rem 1.1rem;
+      box-shadow: var(--shadow-floating);
+      transition: all 0.3s ease;
+    }
+
+    .audio-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .audio-title {
+      font-weight: 800;
+      font-size: 0.88rem;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .audio-status {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .audio-controls-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.38rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .audio-btn {
+      padding: 0.45rem 0.35rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.22rem;
+      transition: all 0.18s ease;
+    }
+
+    .audio-btn:hover {
+      border-color: var(--brand-primary);
+    }
+
+    .audio-btn.primary {
+      background: var(--brand-gradient);
+      color: #ffffff;
+      border-color: transparent;
+    }
+
+    .audio-speed-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.35rem;
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .speed-chip {
+      padding: 0.2rem 0.48rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      font-size: 0.68rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .speed-chip.active {
+      background: var(--brand-primary);
+      color: #ffffff;
+      border-color: var(--brand-primary);
+    }
+
+    /* Tour Guiado Spotlight */
+    .tour-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9998;
+      pointer-events: none;
+    }
+
+    .tour-spotlight {
+      position: fixed;
+      z-index: 9999;
+      border-radius: 12px;
+      box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.72);
+      border: 2px solid #2563EB;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+
+    .tour-card {
+      position: fixed;
+      z-index: 10000;
+      width: 375px;
+      max-width: calc(100vw - 24px);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+      transition: all 0.28s ease;
+    }
+
+    @media (max-width: 980px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .main-area {
+        padding: 1.15rem 1rem;
+      }
+      .brand-slogan {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 0.6rem 0.85rem;
+      }
+      .floating-audio-player {
+        right: 10px;
+        left: 10px;
+        bottom: 10px;
+        width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA SUPERIOR PRINCIPAL CON NUEVO LOGOTIPO Y TEMA DÍA/NOCHE -->
+  <header class="topbar">
+    <a href="#" class="brand" onclick="event.preventDefault(); switchSection('dashboard');">
+      <div class="brand-logo" aria-hidden="true">🧠</div>
+      <div class="brand-text-stack">
+        <span class="brand-title">JAIRRESTAURA</span>
+        <span class="brand-subtitle-tag">IA DE ESTUDIO</span>
+      </div>
+      <span class="brand-slogan">Convierte cualquier documento en conocimiento inteligente</span>
+    </a>
+
+    <div style="display:flex; align-items:center; gap:0.45rem; flex-wrap:wrap;" data-tour="export-bar">
+      <!-- 1. Botón Modo Día y Noche -->
+      <button class="btn btn-theme" onclick="toggleDarkMode()" id="themeToggleBtn" aria-label="Alternar Modo Claro y Modo Oscuro">
+        🌙 Tema Oscuro
+      </button>
+
+      <!-- 2. Botón Escuchar Documento Completo -->
+      <button class="btn btn-audio-main" onclick="speakEntireDocument()" title="Leer documento en voz alta con SpeechSynthesis API">
+        🔊 Escuchar Documento
+      </button>
+
+      <button class="btn btn-amber" onclick="startGuidedTour(0)" title="Iniciar Tour Guiado Paso a Paso">
+        ✨ Tour Guiado
+      </button>
+
+      <button class="btn" onclick="openApiKeyModal()" title="Configurar clave de Gemini API en LocalStorage">
+        🔑 Gemini API
+      </button>
+
+      <button class="btn" onclick="exportDocumentHTML()">HTML</button>
+      <button class="btn" onclick="exportDocumentPDF()">PDF</button>
+      <button class="btn" onclick="exportDocumentWord()">Word</button>
+      <button class="btn" onclick="exportDocumentMarkdown()">MD</button>
+      <button class="btn" onclick="exportDocumentTXT()">TXT</button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" data-tour="sidebar-nav">
+      <div>
+        <div class="sidebar-label">JAIRRESTAURA IA · Cargar Archivo</div>
+        <label class="btn btn-primary" style="width:100%; cursor:pointer;">
+          + Subir PDF / DOCX / TXT / EPUB / PPTX
+          <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.md,.epub,.pptx" style="display:none;" onchange="handleFileUpload(event)" />
+        </label>
+      </div>
+
+      <div>
+        <div class="sidebar-label">Módulos de Estudio Inteligente</div>
+        <div id="navList" style="display:flex; flex-direction:column; gap:0.22rem;">
+          <button class="nav-item active" data-sec="dashboard" onclick="switchSection('dashboard')"><span>📊 Dashboard y Progreso</span></button>
+          <button class="nav-item" data-sec="resumen" onclick="switchSection('resumen')"><span>📝 Resumen Ejecutivo</span></button>
+          <button class="nav-item" data-sec="capitulos" onclick="switchSection('capitulos')"><span>📚 Capítulos del Documento</span></button>
+          <button class="nav-item" data-sec="curso" onclick="switchSection('curso')" data-tour="nav-curso"><span>🎓 Generador de Cursos</span></button>
+          <button class="nav-item" data-sec="conceptos" onclick="switchSection('conceptos')"><span>💡 Conceptos Clave</span></button>
+          <button class="nav-item" data-sec="mapa" onclick="switchSection('mapa')"><span>🕸️ Mapa Conceptual</span></button>
+          <button class="nav-item" data-sec="flashcards" onclick="switchSection('flashcards')" data-tour="nav-flashcards"><span>🃏 Flashcards Interactivas</span></button>
+          <button class="nav-item" data-sec="cuestionario" onclick="switchSection('cuestionario')" data-tour="nav-cuestionario"><span>✅ Cuestionario y Calificación</span></button>
+          <button class="nav-item" data-sec="actividades" onclick="switchSection('actividades')"><span>🛠️ Actividades Prácticas</span></button>
+          <button class="nav-item" data-sec="glosario" onclick="switchSection('glosario')"><span>📖 Glosario Dinámico</span></button>
+          <button class="nav-item" data-sec="tutor" onclick="switchSection('tutor')" data-tour="nav-chat"><span>🤖 Tutor IA (Memoria 20 turnos)</span></button>
+          <button class="nav-item" data-sec="comparador" onclick="switchSection('comparador')"><span>⚖️ Comparador de Documentos</span></button>
+          <button class="nav-item" data-sec="busqueda" onclick="switchSection('busqueda')"><span>🔍 Búsqueda Semántica</span></button>
+        </div>
+      </div>
+
+      <div>
+        <div class="sidebar-label">Biblioteca Persistente (IndexedDB)</div>
+        <div id="libraryList" style="display:flex; flex-direction:column; gap:0.35rem; max-height:200px; overflow-y:auto;"></div>
+      </div>
+
+      <div>
+        <div class="sidebar-label">Historial de Análisis</div>
+        <div id="historyList" style="display:flex; flex-direction:column; gap:0.35rem; font-size:0.74rem; color:var(--text-secondary); max-height:140px; overflow-y:auto;"></div>
+      </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="main-area">
+      <!-- PANTALLA DE BIENVENIDA PREMIUM -->
+      <div id="welcomeScreen" class="card" style="padding:2.2rem;">
+        <div style="display:flex; align-items:center; gap:0.9rem; margin-bottom:1rem;">
+          <div class="brand-logo" style="width:54px; height:54px; font-size:1.75rem;">🧠</div>
+          <div>
+            <span class="badge">JAIRRESTAURA IA DE ESTUDIO · PLATAFORMA EDUCATIVA CON IA</span>
+            <h1 style="font-size:1.95rem; margin-top:0.25rem;">Convierte cualquier documento en conocimiento inteligente</h1>
+          </div>
+        </div>
+
+        <p style="color:var(--text-secondary); max-width:820px; margin-bottom:1.5rem; font-size:0.95rem;">
+          Plataforma educativa con inteligencia artificial capaz de transformar <strong>PDF, DOCX, TXT, EPUB y PPTX</strong> en cursos interactivos, cuestionarios, flashcards, mapas conceptuales y tutorías inteligentes con lector de voz integrado y memoria conversacional de 20 turnos.
+        </p>
+
+        <div class="dropzone" id="dropzoneArea" onclick="document.getElementById('fileInput').click()">
+          <h3 style="font-size:1.18rem; margin-bottom:0.35rem;">Arrastra y suelta tu documento aquí o haz clic para seleccionarlo</h3>
+          <p style="font-size:0.85rem; color:var(--text-secondary);">
+            Procesamiento 100% en navegador con PDF.js, Mammoth.js, JSZip, IndexedDB, SpeechSynthesis API y Gemini API.
+          </p>
+        </div>
+
+        <div style="margin-top:1.6rem;">
+          <div class="sidebar-label" style="margin-bottom:0.65rem;">Ecosistema JAIRRESTAURA IA DE ESTUDIO</div>
+          <div class="grid-2" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));">
+            <div class="kpi-card"><strong>🧠 Motor Documental Propio</strong><p style="font-size:0.78rem; color:var(--text-secondary);">Detecta tema principal, capítulos, resumen, conceptos y glosario.</p></div>
+            <div class="kpi-card"><strong>🌙☀️ Modo Día y Noche</strong><p style="font-size:0.78rem; color:var(--text-secondary);">Alternancia fluida entre Tema Claro y Tema Oscuro en LocalStorage.</p></div>
+            <div class="kpi-card"><strong>🔊 Lector de Voz Inteligente</strong><p style="font-size:0.78rem; color:var(--text-secondary);">Escucha cualquier sección en español con control de velocidad.</p></div>
+            <div class="kpi-card"><strong>🤖 Tutor IA con Memoria</strong><p style="font-size:0.78rem; color:var(--text-secondary);">Profesor experto con memoria de 20 interacciones y preguntas de seguimiento.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTENEDOR DOCUMENTO ACTIVO -->
+      <div id="documentWorkspace" style="display:none;">
+        <!-- Cabecera del documento -->
+        <div class="card" data-tour="doc-header" style="background:linear-gradient(135deg, rgba(37,99,235,0.09), rgba(124,58,237,0.07), rgba(6,182,212,0.06));">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+            <div>
+              <span class="badge" id="docTopicBadge">TEMA DETECTADO</span>
+              <h1 id="docTitleHeading" style="font-size:1.65rem; margin-top:0.4rem;">Título del Documento</h1>
+              <p id="docThesisText" style="color:var(--text-secondary); font-size:0.92rem; margin-top:0.35rem;"></p>
+            </div>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+              <button class="btn btn-audio-main" onclick="speakEntireDocument()">🔊 Escuchar Documento</button>
+              <button class="btn btn-amber" onclick="startGuidedTour(0)">✨ Ver Tour</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 🎙️ BARRA AUTOMÁTICA DE LECTURA INTELIGENTE POR SECCIÓN -->
+        <div id="smartSectionReaderBar" class="smart-reader-banner" style="display:none;">
+          <div style="display:flex; align-items:center; gap:0.65rem;">
+            <span class="badge" style="background:var(--brand-gradient); color:#fff;">🎙️ LECTURA INTELIGENTE</span>
+            <span id="smartSectionReaderLabel" style="font-size:0.84rem; font-weight:600;">
+              Lee únicamente el contenido visible de esta sección en español
+            </span>
+          </div>
+          <button class="btn btn-primary" onclick="speakVisibleSection()">
+            🔊 Escuchar esta sección
+          </button>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label">Palabras Procesadas</div>
+            <div class="kpi-value" id="kpiWords">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Capítulos Creados</div>
+            <div class="kpi-value" id="kpiChapters">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Progreso de Aprendizaje</div>
+            <div class="kpi-value" id="kpiProgress">0%</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Calificación Examen</div>
+            <div class="kpi-value" id="kpiGrade">0.0 / 10</div>
+          </div>
+        </div>
+
+        <!-- 1. DASHBOARD PREMIUM -->
+        <section id="sec-dashboard" class="section-pane active">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.5rem;">
+              <h2>📊 Dashboard de Conocimiento · JAIRRESTAURA IA DE ESTUDIO</h2>
+              <button class="btn btn-audio-main" onclick="speakVisibleSection()">🔊 Escuchar resumen</button>
+            </div>
+            <p id="dashboardOverview" style="color:var(--text-secondary);"></p>
+          </div>
+          <div class="grid-2" id="dashboardFindings"></div>
+        </section>
+
+        <!-- 2. RESUMEN -->
+        <section id="sec-resumen" class="section-pane">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.65rem;">
+              <h2>📝 Resumen Ejecutivo</h2>
+              <button class="btn btn-audio-main" onclick="speakVisibleSection()">🔊 Escuchar esta sección</button>
+            </div>
+            <p id="resumenOverview" style="margin-bottom:1rem;"></p>
+            <h3 style="font-size:1rem; margin-bottom:0.5rem;">Hallazgos y Puntos Clave</h3>
+            <ul id="resumenList" style="padding-left:1.25rem; color:var(--text-secondary);"></ul>
+          </div>
+        </section>
+
+        <!-- 3. CAPÍTULOS -->
+        <section id="sec-capitulos" class="section-pane">
+          <div id="chaptersContainer"></div>
+        </section>
+
+        <!-- 4. GENERADOR DE CURSOS -->
+        <section id="sec-curso" class="section-pane">
+          <div class="card">
+            <h2>🎓 Curso Interactivo Generado · JAIRRESTAURA IA DE ESTUDIO</h2>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">
+              Marca cada módulo como completado para incrementar tu progreso de aprendizaje.
+            </p>
+            <div id="courseContainer"></div>
+          </div>
+        </section>
+
+        <!-- 5. CONCEPTOS CLAVE -->
+        <section id="sec-conceptos" class="section-pane">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.85rem; flex-wrap:wrap; gap:0.5rem;">
+            <h2>💡 Conceptos Clave del Documento</h2>
+            <button class="btn btn-audio-main" onclick="speakVisibleSection()">🔊 Escuchar Conceptos Clave</button>
+          </div>
+          <div class="grid-2" id="conceptsContainer"></div>
+        </section>
+
+        <!-- 6. MAPA CONCEPTUAL -->
+        <section id="sec-mapa" class="section-pane">
+          <div class="card">
+            <h2 style="margin-bottom:0.75rem;">🕸️ Mapa Conceptual Interactivo</h2>
+            <div id="conceptMapHolder" style="width:100%; overflow-x:auto;"></div>
+          </div>
+        </section>
+
+        <!-- 7. FLASHCARDS -->
+        <section id="sec-flashcards" class="section-pane">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+              <h2>🃏 Flashcards Interactivas</h2>
+              <div style="display:flex; align-items:center; gap:0.5rem;">
+                <button class="btn btn-audio-main" onclick="speakCurrentFlashcard()">🔊 Escuchar esta Flashcard</button>
+                <span class="badge" id="flashcardCounter">1 / 1</span>
+              </div>
+            </div>
+            <div class="flashcard-box" onclick="flipCurrentFlashcard()">
+              <div class="badge" id="flashcardSideBadge" style="margin-bottom:0.75rem;">PREGUNTA (Haz clic para voltear)</div>
+              <h3 id="flashcardText" style="font-size:1.2rem; max-width:620px;"></h3>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:1rem; flex-wrap:wrap; gap:0.5rem;">
+              <button class="btn" onclick="prevFlashcard()">← Anterior</button>
+              <button class="btn btn-primary" onclick="flipCurrentFlashcard()">Voltear Tarjeta</button>
+              <button class="btn" onclick="nextFlashcard()">Siguiente →</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. CUESTIONARIO -->
+        <section id="sec-cuestionario" class="section-pane">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+              <h2>✅ Evaluación Automatizada y Calificación</h2>
+              <span class="badge" id="quizScoreBadge">Calificación: 0.0 / 10</span>
+            </div>
+            <div id="quizContainer"></div>
+          </div>
+        </section>
+
+        <!-- 9. ACTIVIDADES -->
+        <section id="sec-actividades" class="section-pane">
+          <div id="activitiesContainer"></div>
+        </section>
+
+        <!-- 10. GLOSARIO -->
+        <section id="sec-glosario" class="section-pane">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
+              <h2>📖 Glosario Dinámico del Documento</h2>
+              <button class="btn btn-audio-main" onclick="speakVisibleSection()">🔊 Escuchar Glosario</button>
+            </div>
+            <input type="text" class="input-field" placeholder="Filtrar término del glosario..." oninput="filterGlossary(this.value)" style="margin-bottom:1rem;" />
+            <div class="grid-2" id="glossaryContainer"></div>
+          </div>
+        </section>
+
+        <!-- 11. TUTOR IA EN MODO PROFESOR EXPERTO CON MEMORIA DE 20 INTERACCIONES -->
+        <section id="sec-tutor" class="section-pane">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.85rem; flex-wrap:wrap; gap:0.5rem;">
+              <div>
+                <span class="badge">JAIRRESTAURA IA DE ESTUDIO · TUTOR IA CON MEMORIA DE 20 INTERACCIONES</span>
+                <h2 style="margin-top:0.35rem;">🤖 Tutor IA Contextual con Memoria Conversacional</h2>
+                <p style="font-size:0.82rem; color:var(--text-secondary);">
+                  Recuerda tus últimas 20 interacciones en LocalStorage, responde preguntas de seguimiento y permite escuchar cada respuesta en voz alta.
+                </p>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                <button class="btn btn-audio-main" onclick="speakLatestTutorAnswer()">🔊 Escuchar Respuesta del Tutor</button>
+                <span class="badge" id="tutorMemoryBadge">Memoria: 0 / 20 turnos</span>
+                <button class="btn btn-danger" onclick="clearCurrentDocumentTutorMemory()" title="Borrar historial conversacional de este documento">
+                  Limpiar memoria
+                </button>
+              </div>
+            </div>
+
+            <div class="chat-box" id="tutorChatBox"></div>
+
+            <div id="tutorSuggestions" style="display:flex; gap:0.45rem; flex-wrap:wrap; margin-bottom:0.75rem;"></div>
+
+            <form onsubmit="event.preventDefault(); askExpertTutor();">
+              <div style="display:flex; gap:0.5rem;">
+                <input type="text" id="tutorInput" class="input-field" placeholder="Haz una pregunta o una pregunta de seguimiento (ej. ¿Qué es la ansiedad? -> ¿Cómo se controla?)..." />
+                <button type="submit" class="btn btn-primary" id="tutorSendBtn">Preguntar al Profesor</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- 12. COMPARADOR -->
+        <section id="sec-comparador" class="section-pane">
+          <div class="card">
+            <h2 style="margin-bottom:0.75rem;">⚖️ Comparador de Documentos de tu Biblioteca</h2>
+            <div class="grid-2" style="margin-bottom:1rem;">
+              <div>
+                <label class="sidebar-label">Documento A</label>
+                <select id="compDocA" class="input-field" onchange="runDocumentComparison()"></select>
+              </div>
+              <div>
+                <label class="sidebar-label">Documento B</label>
+                <select id="compDocB" class="input-field" onchange="runDocumentComparison()"></select>
+              </div>
+            </div>
+            <div id="comparisonResult"></div>
+          </div>
+        </section>
+
+        <!-- 13. BÚSQUEDA SEMÁNTICA -->
+        <section id="sec-busqueda" class="section-pane">
+          <div class="card">
+            <h2 style="margin-bottom:0.75rem;">🔍 Búsqueda Semántica en el Documento</h2>
+            <input type="text" class="input-field" placeholder="Escribe una idea, concepto o pregunta..." oninput="runSemanticSearch(this.value)" style="margin-bottom:1rem;" />
+            <div id="semanticResults"></div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <!-- 🎧 4. PANEL DE AUDIO FLOTANTE (SIEMPRE VISIBLE) -->
+  <aside class="floating-audio-player" aria-label="Reproductor de voz JAIRRESTAURA Audio">
+    <div class="audio-header">
+      <div class="audio-title">
+        <span>🔊 JAIRRESTAURA Audio</span>
+      </div>
+      <span class="badge" id="audioRateBadge">Velocidad 1x</span>
+    </div>
+
+    <div class="audio-status" id="audioStatusLabel">Listo para leer en español…</div>
+
+    <div class="audio-controls-grid">
+      <button type="button" class="audio-btn primary" onclick="handleAudioPlayButton()" title="Leer sección visible">
+        ▶️ Leer
+      </button>
+      <button type="button" class="audio-btn" onclick="pauseSpeech()" title="Pausar lectura">
+        ⏸️ Pausar
+      </button>
+      <button type="button" class="audio-btn" onclick="resumeSpeech()" title="Continuar lectura">
+        ▶️ Continuar
+      </button>
+      <button type="button" class="audio-btn" onclick="stopSpeech()" title="Detener lectura">
+        ⏹️ Detener
+      </button>
+    </div>
+
+    <div class="audio-speed-row" style="margin-bottom:0.55rem;">
+      <span>Velocidad:</span>
+      <div style="display:flex; gap:0.25rem;">
+        <button type="button" class="speed-chip" data-rate="0.75" onclick="setSpeechRate(0.75)">0.75x</button>
+        <button type="button" class="speed-chip active" data-rate="1" onclick="setSpeechRate(1)">1x</button>
+        <button type="button" class="speed-chip" data-rate="1.25" onclick="setSpeechRate(1.25)">1.25x</button>
+        <button type="button" class="speed-chip" data-rate="1.5" onclick="setSpeechRate(1.5)">1.5x</button>
+        <button type="button" class="speed-chip" data-rate="2" onclick="setSpeechRate(2)">2x</button>
+      </div>
+    </div>
+
+    <div>
+      <select id="spanishVoiceSelect" class="input-field" style="padding:0.38rem 0.55rem; font-size:0.73rem;" onchange="handleVoiceChange(this.value)" aria-label="Seleccionar voz en español">
+        <option value="">🎙️ Voz en Español (Automática)</option>
+      </select>
+    </div>
+  </aside>
+
+  <!-- MODAL CLAVE API GEMINI (GUARDADA EN LOCALSTORAGE PARA GITHUB PAGES) -->
+  <div id="apiKeyModal" style="display:none; position:fixed; inset:0; background:rgba(15,23,42,0.72); z-index:9000; align-items:center; justify-content:center; padding:1rem;">
+    <div class="card" style="max-width:480px; width:100%;">
+      <h3 style="margin-bottom:0.5rem;">🔑 Configurar Gemini API Key (LocalStorage)</h3>
+      <p style="font-size:0.83rem; color:var(--text-secondary); margin-bottom:1rem;">
+        Para usar Gemini directamente desde GitHub Pages sin servidor, tu clave se almacena únicamente en el <code>LocalStorage</code> de <strong>JAIRRESTAURA IA DE ESTUDIO</strong>. Nunca se incluye en el código fuente.
+      </p>
+      <input type="password" id="geminiKeyInput" class="input-field" placeholder="AIzaSy..." style="margin-bottom:1rem;" />
+      <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+        <button class="btn" onclick="closeApiKeyModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveApiKey()">Guardar en LocalStorage</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY DEL TOUR GUIADO PASO A PASO -->
+  <div id="guidedTourContainer" style="display:none;">
+    <div class="tour-backdrop"></div>
+    <div id="tourSpotlight" class="tour-spotlight"></div>
+    <div id="tourCard" class="tour-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+        <span class="badge" id="tourStepBadge">PASO 1 DE 7</span>
+        <button class="btn" style="padding:0.2rem 0.5rem;" onclick="closeGuidedTour()">✕</button>
+      </div>
+      <h3 id="tourTitle" style="font-size:1.05rem; margin-bottom:0.4rem;"></h3>
+      <p id="tourDesc" style="font-size:0.83rem; color:var(--text-secondary); margin-bottom:0.75rem;"></p>
+      <div id="tourTip" style="font-size:0.76rem; padding:0.55rem 0.75rem; border-radius:8px; background:var(--accent-soft); color:var(--brand-primary); margin-bottom:0.9rem;"></div>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <button class="btn" id="tourPrevBtn" onclick="prevTourStep()">← Anterior</button>
+        <button class="btn btn-primary" id="tourNextBtn" onclick="nextTourStep()">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if (window.pdfjsLib) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+
+    const APP_BRAND_NAME = 'JAIRRESTAURA IA DE ESTUDIO';
+    const APP_BRAND_SLOGAN = 'Convierte cualquier documento en conocimiento inteligente';
+
+    const DB_NAME = 'JairRestauraIADeEstudioSaaS_DB';
+    const DB_VERSION = 2;
+    const DOC_STORE = 'documents';
+    const HISTORY_STORE = 'history';
+
+    const STORAGE_THEME_KEY = 'jairrestaura_theme_dark';
+    const STORAGE_GEMINI_KEY = 'jairrestaura_gemini_api_key';
+    const STORAGE_TOUR_DONE = 'jairrestaura_guided_tour_done_v2';
+    const STORAGE_TUTOR_MEMORY_PREFIX = 'jairrestaura_ai_tutor_memory_v2_';
+    const STORAGE_SPEECH_RATE = 'jairrestaura_speech_rate_v1';
+    const STORAGE_SPEECH_VOICE = 'jairrestaura_speech_voice_v1';
+    const MAX_TUTOR_MEMORY_INTERACTIONS = 20;
+
+    let dbInstance = null;
+    let documentsLibrary = [];
+    let activeDocument = null;
+    let currentSectionId = 'dashboard';
+    let currentFlashcardIndex = 0;
+    let isFlashcardFlipped = false;
+    let quizUserAnswers = {};
+    let completedCourseSteps = {};
+    let currentTourStep = 0;
+
+    /* =========================================================================
+       PWA MANIFEST DINÁMICO + FAVICON DINÁMICO
+       ========================================================================= */
+    function initDynamicBrandingAssets() {
+      try {
+        const manifestObj = {
+          name: APP_BRAND_NAME,
+          short_name: 'JAIRRESTAURA IA',
+          description: 'Plataforma educativa con inteligencia artificial capaz de transformar PDF, DOCX, TXT, EPUB y PPTX en cursos interactivos, cuestionarios, flashcards, mapas conceptuales y tutorías inteligentes.',
+          start_url: './index.html',
+          display: 'standalone',
+          background_color: '#0B0F17',
+          theme_color: '#2563EB'
+        };
+        const blob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+        const manifestUrl = URL.createObjectURL(blob);
+        const link = document.createElement('link');
+        link.rel = 'manifest';
+        link.href = manifestUrl;
+        document.head.appendChild(link);
+      } catch (e) {}
+    }
+
+    /* =========================================================================
+       🔊 MOTOR DE LECTURA EN VOZ ALTA (SPEECHSYNTHESIS API)
+       ========================================================================= */
+    let availableVoices = [];
+    let selectedVoiceURI = localStorage.getItem(STORAGE_SPEECH_VOICE) || '';
+    let currentSpeechRate = parseFloat(localStorage.getItem(STORAGE_SPEECH_RATE) || '1') || 1;
+    let speechQueueChunks = [];
+    let currentSpeechChunkIndex = 0;
+    let isSpeakingActive = false;
+
+    function initSpeechSynthesisVoices() {
+      if (!('speechSynthesis' in window)) return;
+
+      const loadVoices = () => {
+        const all = window.speechSynthesis.getVoices() || [];
+        const spanishVoices = all.filter((v) => v.lang.toLowerCase().startsWith('es'));
+        availableVoices = spanishVoices.length > 0 ? spanishVoices : all;
+
+        const selectEl = document.getElementById('spanishVoiceSelect');
+        if (!selectEl) return;
+
+        if (!selectedVoiceURI && availableVoices.length > 0) {
+          const preferred =
+            availableVoices.find((v) => v.lang.toLowerCase().includes('es-es')) ||
+            availableVoices.find((v) => v.lang.toLowerCase().includes('es-mx')) ||
+            availableVoices[0];
+          if (preferred) selectedVoiceURI = preferred.voiceURI;
+        }
+
+        selectEl.innerHTML = availableVoices
+          .map(
+            (v) =>
+              `<option value="${escapeHtml(v.voiceURI)}" ${
+                v.voiceURI === selectedVoiceURI ? 'selected' : ''
+              }>🎙️ ${escapeHtml(v.name)} (${escapeHtml(v.lang)})</option>`
+          )
+          .join('');
+      };
+
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+      setSpeechRate(currentSpeechRate, false);
+    }
+
+    function splitIntoSpeechChunks(rawText) {
+      const cleaned = String(rawText || '')
+        .replace(/[*#_`~>-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (!cleaned) return [];
+      const sentences = cleaned.split(/(?<=[.!?])\s+/);
+      const chunks = [];
+      let current = '';
+
+      sentences.forEach((sentence) => {
+        if ((current + ' ' + sentence).length > 220 && current.length > 0) {
+          chunks.push(current.trim());
+          current = sentence;
+        } else {
+          current = current ? current + ' ' + sentence : sentence;
+        }
+      });
+      if (current.trim()) chunks.push(current.trim());
+      return chunks;
+    }
+
+    function speakTextWithJairRestauraAudio(statusLabel, textToRead) {
+      if (!('speechSynthesis' in window)) {
+        alert('Tu navegador no soporta SpeechSynthesis API.');
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      speechQueueChunks = splitIntoSpeechChunks(textToRead);
+      currentSpeechChunkIndex = 0;
+
+      if (speechQueueChunks.length === 0) return;
+
+      isSpeakingActive = true;
+      updateAudioStatus(statusLabel);
+      playSpeechChunkAt(0);
+    }
+
+    function playSpeechChunkAt(index) {
+      if (!('speechSynthesis' in window)) return;
+      if (index >= speechQueueChunks.length) {
+        isSpeakingActive = false;
+        updateAudioStatus('Lectura completada ✓');
+        return;
+      }
+
+      currentSpeechChunkIndex = index;
+      const utterance = new SpeechSynthesisUtterance(speechQueueChunks[index]);
+      utterance.rate = currentSpeechRate;
+      utterance.lang = 'es-ES';
+
+      const chosen = availableVoices.find((v) => v.voiceURI === selectedVoiceURI);
+      if (chosen) {
+        utterance.voice = chosen;
+        utterance.lang = chosen.lang;
+      }
+
+      utterance.onend = () => {
+        if (isSpeakingActive && currentSpeechChunkIndex + 1 < speechQueueChunks.length) {
+          playSpeechChunkAt(currentSpeechChunkIndex + 1);
+        } else if (currentSpeechChunkIndex + 1 >= speechQueueChunks.length) {
+          isSpeakingActive = false;
+          updateAudioStatus('Lectura finalizada ✓');
+        }
+      };
+
+      utterance.onerror = () => {
+        isSpeakingActive = false;
+      };
+
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function handleAudioPlayButton() {
+      speakVisibleSection();
+    }
+
+    function pauseSpeech() {
+      if (!('speechSynthesis' in window)) return;
+      if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+        window.speechSynthesis.pause();
+        updateAudioStatus('⏸️ Lectura en pausa…');
+      }
+    }
+
+    function resumeSpeech() {
+      if (!('speechSynthesis' in window)) return;
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+        updateAudioStatus('▶️ Continuando lectura…');
+      } else if (speechQueueChunks.length > 0) {
+        isSpeakingActive = true;
+        updateAudioStatus('▶️ Reanudando lectura…');
+        playSpeechChunkAt(currentSpeechChunkIndex);
+      } else {
+        speakVisibleSection();
+      }
+    }
+
+    function stopSpeech() {
+      if (!('speechSynthesis' in window)) return;
+      isSpeakingActive = false;
+      window.speechSynthesis.cancel();
+      updateAudioStatus('⏹️ Lectura detenida');
+    }
+
+    function setSpeechRate(rateValue, restartIfSpeaking = true) {
+      currentSpeechRate = rateValue;
+      localStorage.setItem(STORAGE_SPEECH_RATE, String(rateValue));
+
+      const badge = document.getElementById('audioRateBadge');
+      if (badge) badge.textContent = `Velocidad ${rateValue}x`;
+
+      document.querySelectorAll('.speed-chip').forEach((btn) => {
+        btn.classList.toggle('active', parseFloat(btn.getAttribute('data-rate')) === rateValue);
+      });
+
+      if (restartIfSpeaking && isSpeakingActive && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        setTimeout(() => playSpeechChunkAt(currentSpeechChunkIndex), 60);
+      }
+    }
+
+    function handleVoiceChange(voiceURI) {
+      selectedVoiceURI = voiceURI;
+      localStorage.setItem(STORAGE_SPEECH_VOICE, voiceURI);
+      if (isSpeakingActive && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        setTimeout(() => playSpeechChunkAt(currentSpeechChunkIndex), 60);
+      }
+    }
+
+    function updateAudioStatus(text) {
+      const el = document.getElementById('audioStatusLabel');
+      if (el) el.textContent = text;
+    }
+
+    function speakEntireDocument() {
+      if (!activeDocument) {
+        speakTextWithJairRestauraAudio(
+          'Leyendo bienvenida…',
+          'Bienvenido a JAIRRESTAURA IA DE ESTUDIO. Convierte cualquier documento en conocimiento inteligente. Sube un archivo PDF, DOCX, TXT, EPUB o PPTX para escuchar su resumen, capítulos, conceptos clave, flashcards, glosario y respuestas del Tutor IA.'
+        );
+        return;
+      }
+      const a = activeDocument.analysis;
+      const fullNarration = [
+        `Documento en JAIRRESTAURA IA DE ESTUDIO: ${a.documentTitle}.`,
+        `Tema principal: ${a.detectedTopic}.`,
+        `Tesis central: ${a.thesis}.`,
+        `Resumen ejecutivo: ${a.overview}.`,
+        ...a.chapters.map((c) => `${c.title}. ${c.summary}.`),
+        ...a.keyConcepts.map((k) => `Concepto clave ${k.name}: ${k.definition}.`)
+      ].join(' ');
+      speakTextWithJairRestauraAudio(`Leyendo documento: ${a.documentTitle}…`, fullNarration);
+    }
+
+    function speakVisibleSection() {
+      if (!activeDocument) {
+        speakEntireDocument();
+        return;
+      }
+      const a = activeDocument.analysis;
+
+      if (currentSectionId === 'resumen' || currentSectionId === 'dashboard') {
+        speakTextWithJairRestauraAudio(
+          'Leyendo resumen completo…',
+          `Resumen ejecutivo de ${a.documentTitle}. Tesis: ${a.thesis}. ${a.overview}. Hallazgos principales: ${a.keyFindings.join('. ')}`
+        );
+      } else if (currentSectionId === 'capitulos' || currentSectionId === 'curso') {
+        speakTextWithJairRestauraAudio(
+          'Leyendo capítulos…',
+          a.chapters.map((c) => `${c.title}. ${c.summary}. ${c.detailedContent}`).join(' ')
+        );
+      } else if (currentSectionId === 'conceptos') {
+        speakTextWithJairRestauraAudio(
+          'Leyendo conceptos clave…',
+          a.keyConcepts.map((k) => `${k.name}: ${k.definition}. Ejemplo práctico: ${k.practicalExample}`).join(' ')
+        );
+      } else if (currentSectionId === 'flashcards') {
+        speakCurrentFlashcard();
+      } else if (currentSectionId === 'glosario') {
+        speakTextWithJairRestauraAudio(
+          'Leyendo glosario…',
+          a.glossary.map((g) => `${g.term}: ${g.definition}`).join('. ')
+        );
+      } else if (currentSectionId === 'tutor') {
+        speakLatestTutorAnswer();
+      } else {
+        speakEntireDocument();
+      }
+    }
+
+    function speakChapterByIndex(idx) {
+      if (!activeDocument) return;
+      const ch = activeDocument.analysis.chapters[idx];
+      if (!ch) return;
+      speakTextWithJairRestauraAudio(
+        `Leyendo ${ch.title}…`,
+        `${ch.title}. Síntesis: ${ch.summary}. Contenido detallado: ${ch.detailedContent}`
+      );
+    }
+
+    function speakCurrentFlashcard() {
+      if (!activeDocument) return;
+      const cards = activeDocument.analysis.flashcards || [];
+      const card = cards[currentFlashcardIndex % cards.length];
+      if (!card) return;
+      speakTextWithJairRestauraAudio(
+        `Leyendo Flashcard ${currentFlashcardIndex + 1}…`,
+        `Pregunta: ${card.front}. Respuesta: ${card.back}`
+      );
+    }
+
+    function speakLatestTutorAnswer() {
+      if (!activeDocument) return;
+      const history = loadTutorConversationMemory(activeDocument.id);
+      const assistantTurns = history.filter((m) => m.role === 'assistant');
+      if (assistantTurns.length > 0) {
+        speakTextWithJairRestauraAudio(
+          'Leyendo respuesta del Tutor IA…',
+          assistantTurns[assistantTurns.length - 1].content
+        );
+      } else {
+        speakTextWithJairRestauraAudio(
+          'Leyendo bienvenida del Tutor IA…',
+          `Hola, soy tu Profesor y Tutor IA en JAIRRESTAURA IA DE ESTUDIO para ${activeDocument.analysis.documentTitle}. Hazme cualquier pregunta y te responderé con claridad y ejemplos prácticos.`
+        );
+      }
+    }
+
+    /* =========================================================================
+       🌙☀️ MODO DÍA Y NOCHE CON PERSISTENCIA EN LOCALSTORAGE
+       ========================================================================= */
+    function applyThemeFromStorage() {
+      const isDark = localStorage.getItem(STORAGE_THEME_KEY) === 'true';
+      document.body.classList.toggle('dark', isDark);
+      updateThemeButtonLabel();
+    }
+
+    function toggleDarkMode() {
+      const isDarkNow = document.body.classList.toggle('dark');
+      localStorage.setItem(STORAGE_THEME_KEY, isDarkNow ? 'true' : 'false');
+      updateThemeButtonLabel();
+    }
+
+    function updateThemeButtonLabel() {
+      const btn = document.getElementById('themeToggleBtn');
+      if (!btn) return;
+      const isDark = document.body.classList.contains('dark');
+      btn.innerHTML = isDark ? '☀️ Tema Claro' : '🌙 Tema Oscuro';
+    }
+
+    /* =========================================================================
+       TOUR GUIADO CONFIGURACIÓN
+       ========================================================================= */
+    const GUIDED_TOUR_STEPS = [
+      {
+        selector: '[data-tour="doc-header"]',
+        section: 'dashboard',
+        title: '1. Tema Principal y Lector de Voz',
+        description: 'Al subir tu archivo, JAIRRESTAURA IA DE ESTUDIO detecta el tema central, genera capítulos propios y habilita la narración en voz alta.',
+        tip: 'Usa "🔊 Escuchar Documento" para oír todo el análisis en español.'
+      },
+      {
+        selector: '[data-tour="sidebar-nav"]',
+        section: 'dashboard',
+        title: '2. Menú de 13 Módulos y Biblioteca IndexedDB',
+        description: 'Navega por resúmenes, capítulos, curso interactivo, mapa conceptual, glosario y tu biblioteca persistente.',
+        tip: 'Tus documentos quedan guardados localmente en IndexedDB.'
+      },
+      {
+        selector: '[data-tour="nav-curso"]',
+        section: 'curso',
+        title: '3. Generador Automático de Cursos',
+        description: 'Transformamos los capítulos del documento en módulos didácticos paso a paso con seguimiento de progreso.',
+        tip: 'Marca cada módulo completado para actualizar tu porcentaje de avance.'
+      },
+      {
+        selector: '[data-tour="nav-flashcards"]',
+        section: 'flashcards',
+        title: '4. Flashcards Interactivas con Audio',
+        description: 'Estudia los conceptos fundamentales mediante tarjetas interactivas y escúchalas en voz alta.',
+        tip: 'Haz clic sobre la tarjeta para voltearla.'
+      },
+      {
+        selector: '[data-tour="nav-cuestionario"]',
+        section: 'cuestionario',
+        title: '5. Cuestionario con Calificación Automática',
+        description: 'Pon a prueba tu comprensión con preguntas de opción múltiple, retroalimentación inmediata y nota sobre 10.',
+        tip: 'Tu calificación se actualiza en tiempo real en el panel superior.'
+      },
+      {
+        selector: '[data-tour="nav-chat"]',
+        section: 'tutor',
+        title: '6. Tutor IA Experto con Memoria de 20 Interacciones',
+        description: 'El Tutor IA de JAIRRESTAURA IA DE ESTUDIO conserva las últimas 20 interacciones en LocalStorage, responde preguntas de seguimiento y lee cada explicación en voz alta.',
+        tip: 'Prueba preguntar "¿Qué es...?" y luego "¿Cómo se controla?".'
+      },
+      {
+        selector: '[data-tour="export-bar"]',
+        section: 'tutor',
+        title: '7. Modo Día/Noche y Exportación Multi-Formato',
+        description: 'Alterna entre Modo Claro y Oscuro y descarga tu estudio en PDF, Word, HTML, Markdown o TXT.',
+        tip: 'El reproductor flotante "🔊 JAIRRESTAURA Audio" permanece siempre disponible abajo a la derecha.'
+      }
+    ];
+
+    /* =========================================================================
+       MEMORIA CONVERSACIONAL DEL TUTOR IA (ÚLTIMAS 20 INTERACCIONES EN LOCALSTORAGE)
+       ========================================================================= */
+    function getTutorMemoryKey(docId) {
+      return STORAGE_TUTOR_MEMORY_PREFIX + (docId || 'default');
+    }
+
+    function loadTutorConversationMemory(docId) {
+      try {
+        const raw = localStorage.getItem(getTutorMemoryKey(docId));
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed
+          .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string')
+          .slice(-MAX_TUTOR_MEMORY_INTERACTIONS);
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveTutorConversationMemory(docId, historyArray) {
+      try {
+        const trimmed = (historyArray || []).slice(-MAX_TUTOR_MEMORY_INTERACTIONS);
+        localStorage.setItem(getTutorMemoryKey(docId), JSON.stringify(trimmed));
+        updateTutorMemoryBadge(trimmed.length);
+      } catch (e) {}
+    }
+
+    function updateTutorMemoryBadge(count) {
+      const badge = document.getElementById('tutorMemoryBadge');
+      if (badge) {
+        badge.textContent = `Memoria: ${Math.min(MAX_TUTOR_MEMORY_INTERACTIONS, count)} / ${MAX_TUTOR_MEMORY_INTERACTIONS} turnos`;
+      }
+    }
+
+    function clearCurrentDocumentTutorMemory() {
+      if (!activeDocument) return;
+      try {
+        localStorage.removeItem(getTutorMemoryKey(activeDocument.id));
+      } catch (e) {}
+      initTutorChat(activeDocument.analysis);
+    }
+
+    function resolveFollowUpSubject(question, conversationHistory, analysis) {
+      const q = (question || '').trim();
+      const isFollowUpPattern =
+        /^(?:[¿¡]?)(?:c[oó]mo|por qu[eé]|cu[aá]ndo|d[oónde]|qu[eé]|cu[aá]l|cu[aá]les|qui[eé]n)\s+(?:se|lo|la|los|las|le|les)\b/i.test(q) ||
+        /\b(?:se controla|se maneja|se supera|se aplica|se evita|se previene|se trata|se mide|se manifiesta|se relaciona|funciona|ocurre|sirve|afecta|causas|consecuencias|beneficios|ventajas|desventajas|ejemplos?|m[aá]s detalles|expl[ií]came m[aá]s|profundiza|y en la pr[aá]ctica)\b/i.test(q) ||
+        q.split(/\s+/).length <= 5;
+
+      const recentTurns = (conversationHistory || []).slice(-MAX_TUTOR_MEMORY_INTERACTIONS);
+      if (!isFollowUpPattern || recentTurns.length === 0) {
+        return { isFollowUp: false, resolvedSubject: '', expandedQuery: q };
+      }
+
+      const stopWords = new Set([
+        'como', 'cómo', 'que', 'qué', 'cual', 'cuál', 'cuales', 'cuáles', 'cuando', 'cuándo',
+        'donde', 'dónde', 'quien', 'quién', 'porque', 'por', 'para', 'con', 'sin', 'sobre',
+        'entre', 'hacia', 'hasta', 'desde', 'este', 'esta', 'estos', 'estas', 'ese', 'esa',
+        'esos', 'esas', 'aquel', 'aquella', 'algo', 'nada', 'todo', 'toda', 'todos', 'todas',
+        'puedo', 'puede', 'pueden', 'debe', 'deben', 'hacer', 'hace', 'hacen', 'tiene', 'tienen',
+        'controla', 'maneja', 'supera', 'aplica', 'funciona', 'ocurre', 'significa', 'consiste',
+        'explica', 'explicame', 'dime', 'dame', 'segun', 'según', 'documento', 'libro', 'texto'
+      ]);
+
+      const reversed = [...recentTurns].reverse();
+      for (const turn of reversed) {
+        const text = (turn.content || '').trim();
+        const lower = text.toLowerCase();
+
+        for (const kc of (analysis.keyConcepts || [])) {
+          if (kc.name && lower.includes(kc.name.toLowerCase())) {
+            return { isFollowUp: true, resolvedSubject: kc.name, expandedQuery: `${q} (${kc.name})` };
+          }
+        }
+
+        for (const gl of (analysis.glossary || [])) {
+          if (gl.term && lower.includes(gl.term.toLowerCase())) {
+            return { isFollowUp: true, resolvedSubject: gl.term, expandedQuery: `${q} (${gl.term})` };
+          }
+        }
+
+        if (turn.role === 'user') {
+          const explicitMatch = text.match(
+            /(?:qu[eé]\s+es|qu[eé]\s+son|habla\s+de|sobre|acerca\s+de|vencer|controlar|manejar|superar|entender|explica(?:r|me)?)\s+(?:el|la|los|las|un|una)?\s*([a-záéíóúñü\s]{3,35})/i
+          );
+          if (explicitMatch && explicitMatch[1]) {
+            const candidate = explicitMatch[1].replace(/[?¿!¡.,;:]/g, '').trim();
+            if (candidate.length >= 3 && !stopWords.has(candidate.toLowerCase())) {
+              return { isFollowUp: true, resolvedSubject: candidate, expandedQuery: `${q} (${candidate})` };
+            }
+          }
+
+          const meaningfulWords = lower
+            .replace(/[?¿!¡.,;:()"]/g, ' ')
+            .split(/\s+/)
+            .filter((w) => w.length >= 4 && !stopWords.has(w));
+
+          if (meaningfulWords.length > 0) {
+            const subject = meaningfulWords.slice(0, 2).join(' ');
+            return { isFollowUp: true, resolvedSubject: subject, expandedQuery: `${q} (${subject})` };
+          }
+        }
+      }
+
+      const fallbackTopic = analysis.detectedTopic || analysis.documentTitle;
+      return { isFollowUp: true, resolvedSubject: fallbackTopic, expandedQuery: `${q} (${fallbackTopic})` };
+    }
+
+    /* =========================================================================
+       INDEXEDDB INICIALIZACIÓN Y PERSISTENCIA
+       ========================================================================= */
+    function initIndexedDB() {
+      initDynamicBrandingAssets();
+      applyThemeFromStorage();
+      initSpeechSynthesisVoices();
+
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = (e) => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(DOC_STORE)) {
+          db.createObjectStore(DOC_STORE, { keyPath: 'id' });
+        }
+        if (!db.objectStoreNames.contains(HISTORY_STORE)) {
+          db.createObjectStore(HISTORY_STORE, { keyPath: 'id' });
+        }
+      };
+      req.onsuccess = (e) => {
+        dbInstance = e.target.result;
+        loadLibraryFromDB();
+        loadHistoryFromDB();
+      };
+    }
+
+    function saveDocumentToDB(record) {
+      if (!dbInstance) return;
+      const tx = dbInstance.transaction([DOC_STORE, HISTORY_STORE], 'readwrite');
+      tx.objectStore(DOC_STORE).put(record);
+      tx.objectStore(HISTORY_STORE).put({
+        id: 'hist-' + Date.now(),
+        title: record.analysis.documentTitle,
+        topic: record.analysis.detectedTopic,
+        date: new Date().toLocaleString()
+      });
+      tx.oncomplete = () => {
+        loadLibraryFromDB();
+        loadHistoryFromDB();
+      };
+    }
+
+    function loadLibraryFromDB() {
+      if (!dbInstance) return;
+      const tx = dbInstance.transaction(DOC_STORE, 'readonly');
+      const req = tx.objectStore(DOC_STORE).getAll();
+      req.onsuccess = () => {
+        documentsLibrary = (req.result || []).sort((a, b) => b.createdAt - a.createdAt);
+        renderLibrarySidebar();
+        populateComparisonSelectors();
+        if (documentsLibrary.length > 0 && !activeDocument) {
+          selectDocument(documentsLibrary[0].id);
+        }
+      };
+    }
+
+    function loadHistoryFromDB() {
+      if (!dbInstance) return;
+      const tx = dbInstance.transaction(HISTORY_STORE, 'readonly');
+      const req = tx.objectStore(HISTORY_STORE).getAll();
+      req.onsuccess = () => {
+        const list = document.getElementById('historyList');
+        const items = (req.result || []).slice(-8).reverse();
+        list.innerHTML = items.length === 0
+          ? '<div>Sin análisis previos</div>'
+          : items.map((h) => `<div style="padding:0.3rem 0; border-bottom:1px solid var(--border);"><strong>${escapeHtml(h.title)}</strong><br/><span style="font-size:0.68rem;">${escapeHtml(h.topic)} · ${escapeHtml(h.date)}</span></div>`).join('');
+      };
+    }
+
+    function renderLibrarySidebar() {
+      const container = document.getElementById('libraryList');
+      if (documentsLibrary.length === 0) {
+        container.innerHTML = '<div style="font-size:0.76rem; color:var(--text-muted);">Sube un archivo para inaugurar tu biblioteca.</div>';
+        return;
+      }
+      container.innerHTML = documentsLibrary.map((doc) => `
+        <button class="nav-item ${activeDocument && activeDocument.id === doc.id ? 'active' : ''}" onclick="selectDocument('${doc.id}')">
+          <span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">📄 ${escapeHtml(doc.analysis.documentTitle)}</span>
+        </button>
+      `).join('');
+    }
+
+    /* =========================================================================
+       LECTURA REAL DE ARCHIVOS (PDF, DOCX, EPUB, PPTX, TXT)
+       ========================================================================= */
+    const dropzoneArea = document.getElementById('dropzoneArea');
+    if (dropzoneArea) {
+      dropzoneArea.addEventListener('dragover', (e) => { e.preventDefault(); });
+      dropzoneArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          processUploadedFile(e.dataTransfer.files[0]);
+        }
+      });
+    }
+
+    function handleFileUpload(event) {
+      const file = event.target.files && event.target.files[0];
+      if (file) processUploadedFile(file);
+      event.target.value = '';
+    }
+
+    async function extractTextFromFile(file) {
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (ext === 'pdf' && window.pdfjsLib) {
+        const buffer = await file.arrayBuffer();
+        const pdf = await window.pdfjsLib.getDocument({ data: buffer }).promise;
+        let pagesText = [];
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          pagesText.push(content.items.map((it) => it.str).join(' '));
+        }
+        return pagesText.join('\n\n');
+      }
+      if (ext === 'docx' && window.mammoth) {
+        const buffer = await file.arrayBuffer();
+        const res = await window.mammoth.extractRawText({ arrayBuffer: buffer });
+        return res.value || '';
+      }
+      if ((ext === 'epub' || ext === 'pptx') && window.JSZip) {
+        const buffer = await file.arrayBuffer();
+        const zip = await window.JSZip.loadAsync(buffer);
+        let texts = [];
+        for (const filename of Object.keys(zip.files)) {
+          if (/\.(xhtml|html|xml|txt)$/i.test(filename)) {
+            const raw = await zip.files[filename].async('string');
+            const clean = raw.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+            if (clean.length > 40) texts.push(clean);
+          }
+        }
+        return texts.join('\n\n');
+      }
+      return await file.text();
+    }
+
+    async function processUploadedFile(file) {
+      const rawText = await extractTextFromFile(file);
+      const cleaned = (rawText || '').replace(/\s+/g, ' ').trim();
+      if (cleaned.length < 30) {
+        alert('No se pudo extraer texto suficiente del archivo.');
+        return;
+      }
+
+      const isFirstDocument = documentsLibrary.length === 0;
+      const analysis = buildDynamicDocumentAnalysis(file.name, cleaned);
+      const record = {
+        id: 'doc-' + Date.now(),
+        fileName: file.name,
+        createdAt: Date.now(),
+        analysis
+      };
+
+      activeDocument = record;
+      quizUserAnswers = {};
+      completedCourseSteps = {};
+      saveDocumentToDB(record);
+      renderActiveDocument();
+
+      if (isFirstDocument || localStorage.getItem(STORAGE_TOUR_DONE) !== 'true') {
+        setTimeout(() => startGuidedTour(0), 350);
+      }
+    }
+
+    /* =========================================================================
+       MOTOR DOCUMENTAL DINÁMICO
+       ========================================================================= */
+    function buildDynamicDocumentAnalysis(fileName, rawText) {
+      const cleanTitle = fileName.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+      const sentences = rawText
+        .split(/(?<=[.!?])\s+/)
+        .map((s) => s.trim())
+        .filter((s) => s.length > 35);
+
+      const words = rawText.toLowerCase().match(/[a-záéíóúñü]{5,}/g) || [];
+      const stop = new Set(['sobre', 'entre', 'cuando', 'donde', 'porque', 'aunque', 'desde', 'hasta', 'todos', 'todas', 'puede', 'pueden', 'mismo', 'misma', 'parte', 'forma', 'tiempo', 'mundo', 'hacer', 'tiene', 'tienen', 'según', 'durante']);
+      const freq = {};
+      words.forEach((w) => {
+        if (!stop.has(w)) freq[w] = (freq[w] || 0) + 1;
+      });
+      const topKeywords = Object.entries(freq)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8)
+        .map((e) => e[0]);
+
+      const detectedTopic = topKeywords.slice(0, 3).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(', ') || cleanTitle;
+      const thesis = sentences[0] || `Este documento desarrolla los fundamentos esenciales sobre ${detectedTopic}.`;
+      const overview = sentences.slice(0, 4).join(' ');
+
+      const chunkCount = Math.min(5, Math.max(3, Math.ceil(sentences.length / 8)));
+      const perChunk = Math.max(2, Math.ceil(sentences.length / chunkCount));
+      const chapters = [];
+
+      for (let i = 0; i < chunkCount; i++) {
+        const slice = sentences.slice(i * perChunk, (i + 1) * perChunk);
+        if (slice.length === 0) continue;
+        const kw = topKeywords[i % topKeywords.length] || 'Análisis';
+        chapters.push({
+          number: i + 1,
+          title: `Capítulo ${i + 1}: ${kw.charAt(0).toUpperCase() + kw.slice(1)} y Desarrollo`,
+          summary: slice.slice(0, 2).join(' '),
+          detailedContent: slice.join(' '),
+          keyTakeaways: slice.slice(0, 3)
+        });
+      }
+
+      const keyConcepts = topKeywords.slice(0, 6).map((kw, idx) => {
+        const matchingSentence = sentences.find((s) => s.toLowerCase().includes(kw)) || sentences[idx % sentences.length] || thesis;
+        const exampleSentence = sentences.find((s) => s !== matchingSentence && s.toLowerCase().includes(kw)) || sentences[(idx + 1) % sentences.length] || thesis;
+        return {
+          name: kw.charAt(0).toUpperCase() + kw.slice(1),
+          category: idx % 2 === 0 ? 'Concepto Nuclear' : 'Aplicación Práctica',
+          definition: matchingSentence,
+          practicalExample: exampleSentence
+        };
+      });
+
+      const flashcards = keyConcepts.map((c, idx) => ({
+        id: 'fc-' + idx,
+        front: `¿Cómo se define y aplica "${c.name}" según el documento "${cleanTitle}"?`,
+        back: `${c.definition} Ejemplo práctico en la obra: ${c.practicalExample}`
+      }));
+
+      const quiz = chapters.map((ch, idx) => {
+        const correct = ch.summary.slice(0, 140);
+        const distractor1 = chapters[(idx + 1) % chapters.length]?.summary.slice(0, 140) || 'Descartar la evidencia contextual y omitir los factores clave.';
+        const distractor2 = 'Sustituir el análisis integral por supuestos aislados sin respaldo en la obra.';
+        return {
+          id: 'q-' + idx,
+          question: `Según el ${ch.title}, ¿cuál es el planteamiento fundamental que sostiene el autor?`,
+          options: [correct, distractor1, distractor2],
+          correctIndex: 0,
+          explanation: `En ${ch.title} se establece expresamente: ${ch.summary}`
+        };
+      });
+
+      const glossary = keyConcepts.map((c) => ({
+        term: c.name,
+        category: c.category,
+        definition: c.definition,
+        contextUsage: c.practicalExample
+      }));
+
+      const activities = chapters.slice(0, 3).map((ch, idx) => ({
+        title: `Actividad Práctica ${idx + 1}: Caso Aplicado sobre ${ch.title}`,
+        objective: `Aplicar las herramientas expuestas en ${ch.title} a una situación real.`,
+        steps: [
+          `Identifica la idea rectora planteada en ${ch.title}.`,
+          `Relaciona esa idea con el concepto clave "${keyConcepts[idx % keyConcepts.length]?.name || detectedTopic}".`,
+          `Redacta un plan de acción práctico inspirado en: "${ch.summary.slice(0, 120)}..."`
+        ]
+      }));
+
+      return {
+        documentTitle: cleanTitle,
+        detectedTopic,
+        wordCount: rawText.split(/\s+/).length,
+        thesis,
+        overview,
+        keyFindings: sentences.slice(0, 5),
+        chapters,
+        keyConcepts,
+        flashcards,
+        quiz,
+        glossary,
+        activities
+      };
+    }
+
+    function selectDocument(docId) {
+      const found = documentsLibrary.find((d) => d.id === docId);
+      if (!found) return;
+      activeDocument = found;
+      quizUserAnswers = {};
+      completedCourseSteps = {};
+      renderLibrarySidebar();
+      renderActiveDocument();
+    }
+
+    function renderActiveDocument() {
+      if (!activeDocument) return;
+      const a = activeDocument.analysis;
+
+      document.title = `${a.documentTitle} — ${APP_BRAND_NAME}`;
+
+      document.getElementById('welcomeScreen').style.display = 'none';
+      document.getElementById('documentWorkspace').style.display = 'block';
+
+      document.getElementById('docTopicBadge').textContent = 'TEMA PRINCIPAL: ' + a.detectedTopic.toUpperCase();
+      document.getElementById('docTitleHeading').textContent = a.documentTitle;
+      document.getElementById('docThesisText').textContent = a.thesis;
+
+      document.getElementById('kpiWords').textContent = a.wordCount.toLocaleString();
+      document.getElementById('kpiChapters').textContent = a.chapters.length;
+      updateProgressKPI();
+
+      // Dashboard & Resumen
+      document.getElementById('dashboardOverview').textContent = a.overview;
+      document.getElementById('dashboardFindings').innerHTML = a.keyFindings.map((f, i) => `
+        <div class="card" style="margin-bottom:0;">
+          <span class="badge">HALLAZGO ${i + 1}</span>
+          <p style="margin-top:0.5rem; font-size:0.88rem;">${escapeHtml(f)}</p>
+        </div>
+      `).join('');
+
+      document.getElementById('resumenOverview').textContent = a.overview;
+      document.getElementById('resumenList').innerHTML = a.keyFindings.map((f) => `<li style="margin-bottom:0.45rem;">${escapeHtml(f)}</li>`).join('');
+
+      // Capítulos con botón individual 🔊 Escuchar este capítulo
+      document.getElementById('chaptersContainer').innerHTML = a.chapters.map((ch, idx) => `
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+            <span class="badge">CAPÍTULO ${ch.number}</span>
+            <button class="btn btn-audio-main" onclick="speakChapterByIndex(${idx})">🔊 Escuchar este capítulo</button>
+          </div>
+          <h3 style="margin:0.4rem 0;">${escapeHtml(ch.title)}</h3>
+          <p style="color:var(--text-secondary); font-size:0.88rem; margin-bottom:0.65rem;"><strong>Síntesis:</strong> ${escapeHtml(ch.summary)}</p>
+          <p style="font-size:0.86rem;">${escapeHtml(ch.detailedContent)}</p>
+        </div>
+      `).join('');
+
+      // Curso
+      document.getElementById('courseContainer').innerHTML = a.chapters.map((ch, idx) => `
+        <div class="card" style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;">
+            <span class="badge">MÓDULO ${idx + 1}</span>
+            <h3 style="margin:0.35rem 0;">${escapeHtml(ch.title)}</h3>
+            <p style="font-size:0.86rem; color:var(--text-secondary);">${escapeHtml(ch.summary)}</p>
+          </div>
+          <div style="display:flex; gap:0.4rem;">
+            <button class="btn btn-audio-main" onclick="speakChapterByIndex(${idx})">🔊 Escuchar</button>
+            <button class="btn ${completedCourseSteps[idx] ? 'btn-primary' : ''}" onclick="toggleCourseStep(${idx})">
+              ${completedCourseSteps[idx] ? '✓ Completado' : 'Marcar Completado'}
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      // Conceptos Clave
+      document.getElementById('conceptsContainer').innerHTML = a.keyConcepts.map((c) => `
+        <div class="card" style="margin-bottom:0;">
+          <span class="badge">${escapeHtml(c.category)}</span>
+          <h3 style="margin:0.4rem 0;">${escapeHtml(c.name)}</h3>
+          <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:0.5rem;">${escapeHtml(c.definition)}</p>
+          <p style="font-size:0.8rem; background:var(--bg-elevated); padding:0.55rem 0.75rem; border-radius:8px;"><strong>Ejemplo práctico:</strong> ${escapeHtml(c.practicalExample)}</p>
+        </div>
+      `).join('');
+
+      renderConceptMapSVG(a);
+
+      currentFlashcardIndex = 0;
+      isFlashcardFlipped = false;
+      renderCurrentFlashcard();
+
+      renderQuizSection(a);
+
+      document.getElementById('activitiesContainer').innerHTML = a.activities.map((act) => `
+        <div class="card">
+          <h3>${escapeHtml(act.title)}</h3>
+          <p style="font-size:0.85rem; color:var(--text-secondary); margin:0.35rem 0 0.65rem;"><strong>Objetivo:</strong> ${escapeHtml(act.objective)}</p>
+          <ol style="padding-left:1.25rem; font-size:0.86rem;">
+            ${act.steps.map((st) => `<li style="margin-bottom:0.3rem;">${escapeHtml(st)}</li>`).join('')}
+          </ol>
+        </div>
+      `).join('');
+
+      document.getElementById('glossaryContainer').innerHTML = a.glossary.map((g) => `
+        <div class="card glossary-item" style="margin-bottom:0;">
+          <span class="badge">${escapeHtml(g.category)}</span>
+          <h3 style="margin:0.35rem 0;">${escapeHtml(g.term)}</h3>
+          <p style="font-size:0.85rem; color:var(--text-secondary);">${escapeHtml(g.definition)}</p>
+        </div>
+      `).join('');
+
+      initTutorChat(a);
+      updateSmartSectionReaderBanner();
+    }
+
+    /* =========================================================================
+       TUTOR IA EN MODO PROFESOR EXPERTO CON MEMORIA DE 20 INTERACCIONES
+       ========================================================================= */
+    function initTutorChat(analysis) {
+      const box = document.getElementById('tutorChatBox');
+      const sugBox = document.getElementById('tutorSuggestions');
+      const savedHistory = loadTutorConversationMemory(activeDocument?.id);
+
+      const welcomeMessage = `¡Hola! Soy tu profesor y Tutor IA en ${APP_BRAND_NAME} para "${analysis.documentTitle}". He estudiado todo el contenido sobre ${analysis.detectedTopic} y conservo en memoria nuestras últimas 20 interacciones para responder preguntas de seguimiento.\n\nPregúntame cualquier duda (por ejemplo, "¿Qué es ${analysis.keyConcepts[0]?.name || analysis.detectedTopic}?" y luego "¿Cómo se controla?") y también podrás escuchar mis respuestas en voz alta.`;
+
+      let htmlMessages = `<div class="chat-msg assistant">${escapeHtml(welcomeMessage)}</div>`;
+      savedHistory.forEach((turn) => {
+        htmlMessages += `<div class="chat-msg ${turn.role}">${escapeHtml(turn.content)}</div>`;
+      });
+
+      box.innerHTML = htmlMessages;
+      box.scrollTop = box.scrollHeight;
+      updateTutorMemoryBadge(savedHistory.length);
+
+      const firstConcept = analysis.keyConcepts[0]?.name || analysis.detectedTopic;
+      const sampleQuestions = [
+        `¿Qué es ${firstConcept}?`,
+        `¿Cómo se controla o aplica en la práctica?`,
+        `Dame un ejemplo práctico de ${firstConcept}`
+      ];
+      sugBox.innerHTML = sampleQuestions.map((q) => `
+        <button class="btn" style="font-size:0.74rem;" onclick="askExpertTutor('${escapeHtml(q).replace(/'/g, "\\'")}')">${escapeHtml(q)}</button>
+      `).join('');
+    }
+
+    function buildRelevantTutorContext(question, analysis, conversationHistory) {
+      const followUp = resolveFollowUpSubject(question, conversationHistory, analysis);
+      const effectiveQuery = followUp.expandedQuery.toLowerCase().trim();
+      const tokens = effectiveQuery
+        .replace(/[?¿!¡.,;:()"]/g, ' ')
+        .split(/\s+/)
+        .filter((w) => w.length >= 3);
+
+      const scoreText = (text) => {
+        const haystack = (text || '').toLowerCase();
+        return tokens.reduce((acc, tok) => acc + (haystack.includes(tok) ? 3 : 0), 0);
+      };
+
+      const relevantChapters = [...(analysis.chapters || [])]
+        .map((ch) => ({ ch, score: scoreText(`${ch.title} ${ch.summary} ${ch.detailedContent}`) }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
+        .map((item) => item.ch);
+
+      const relatedConcepts = [...(analysis.keyConcepts || [])]
+        .map((kc) => ({ kc, score: scoreText(`${kc.name} ${kc.definition} ${kc.practicalExample}`) }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
+        .map((item) => item.kc);
+
+      const glossaryTerms = [...(analysis.glossary || [])]
+        .map((gl) => ({ gl, score: scoreText(`${gl.term} ${gl.definition} ${gl.contextUsage}`) }))
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)
+        .map((item) => item.gl);
+
+      const recentConversation = (conversationHistory || []).slice(-MAX_TUTOR_MEMORY_INTERACTIONS);
+
+      const contextText = [
+        `PLATAFORMA: ${APP_BRAND_NAME}`,
+        `DOCUMENTO: "${analysis.documentTitle}"`,
+        `TEMA PRINCIPAL: ${analysis.detectedTopic}`,
+        followUp.isFollowUp && followUp.resolvedSubject
+          ? `TEMA EN CURSO RESUELTO DE LA CONVERSACIÓN ANTERIOR: "${followUp.resolvedSubject}"`
+          : '',
+        recentConversation.length > 0
+          ? `\nMEMORIA DE CONVERSACIÓN (ÚLTIMAS ${recentConversation.length} INTERACCIONES):\n` +
+            recentConversation.map((m, i) => `${i + 1}. ${m.role === 'user' ? 'Usuario' : 'Profesor IA'}: ${m.content}`).join('\n')
+          : '',
+        `\n1. RESUMEN DEL DOCUMENTO:`,
+        `- Tesis central: ${analysis.thesis}`,
+        `- Síntesis general: ${analysis.overview}`,
+        `\n2. CAPÍTULOS RELEVANTES PARA LA PREGUNTA:`,
+        ...relevantChapters.map((c) => `- ${c.title}: ${c.summary} Detalle: ${c.detailedContent}`),
+        `\n3. CONCEPTOS RELACIONADOS:`,
+        ...relatedConcepts.map((c) => `- ${c.name} (${c.category}): ${c.definition} Ejemplo práctico: ${c.practicalExample}`),
+        `\n4. GLOSARIO RELACIONADO:`,
+        ...glossaryTerms.map((g) => `- ${g.term}: ${g.definition}`)
+      ].filter(Boolean).join('\n');
+
+      const citedSections = [
+        ...relevantChapters.slice(0, 2).map((c) => c.title),
+        ...relatedConcepts.slice(0, 1).map((c) => `Concepto: ${c.name}`)
+      ];
+
+      return {
+        contextText,
+        relevantChapters,
+        relatedConcepts,
+        glossaryTerms,
+        citedSections,
+        isFollowUp: followUp.isFollowUp,
+        resolvedSubject: followUp.resolvedSubject
+      };
+    }
+
+    async function askExpertTutor(presetQuestion) {
+      if (!activeDocument) return;
+      const input = document.getElementById('tutorInput');
+      const box = document.getElementById('tutorChatBox');
+      const question = (presetQuestion || input.value || '').trim();
+      if (!question) return;
+
+      if (!presetQuestion) input.value = '';
+
+      const priorHistory = loadTutorConversationMemory(activeDocument.id);
+
+      box.innerHTML += `<div class="chat-msg user">${escapeHtml(question)}</div>`;
+      box.scrollTop = box.scrollHeight;
+
+      const analysis = activeDocument.analysis;
+      const ctx = buildRelevantTutorContext(question, analysis, priorHistory);
+
+      let expertAnswer = '';
+      let cited = ctx.citedSections;
+
+      const systemInstruction = `Eres un profesor experto, empático y sumamente didáctico de ${APP_BRAND_NAME}, especializado en enseñar el contenido del documento "${analysis.documentTitle}".
+Recibes el historial reciente de las últimas 20 interacciones y resuelves preguntas de seguimiento (como "¿Cómo se controla?") conectándolas con el sujeto mencionado previamente ("${ctx.resolvedSubject || analysis.detectedTopic}").
+Responde de forma clara, educativa, conversacional y con ejemplos prácticos, sin devolver listas crudas de capítulos.`;
+
+      try {
+        const res = await fetch('/api/tutor/ask', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question,
+            conversationHistory: priorHistory.slice(-MAX_TUTOR_MEMORY_INTERACTIONS),
+            structuredContext: {
+              documentTitle: analysis.documentTitle,
+              mainTopic: analysis.detectedTopic,
+              resolvedFollowUpSubject: ctx.resolvedSubject || undefined,
+              summary: {
+                thesisStatement: analysis.thesis,
+                overview: analysis.overview,
+                keyFindings: analysis.keyFindings
+              },
+              relevantChapters: ctx.relevantChapters,
+              relatedConcepts: ctx.relatedConcepts,
+              glossaryTerms: ctx.glossaryTerms
+            }
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.answer) {
+            expertAnswer = data.answer;
+            if (Array.isArray(data.citedSections) && data.citedSections.length > 0) {
+              cited = data.citedSections;
+            }
+          }
+        }
+      } catch (e) {}
+
+      if (!expertAnswer) {
+        const userApiKey = localStorage.getItem(STORAGE_GEMINI_KEY);
+        if (userApiKey && userApiKey.trim().length > 10) {
+          try {
+            const multiTurnContents = priorHistory.slice(-MAX_TUTOR_MEMORY_INTERACTIONS).map((turn) => ({
+              role: turn.role === 'assistant' ? 'model' : 'user',
+              parts: [{ text: turn.content }]
+            }));
+
+            multiTurnContents.push({
+              role: 'user',
+              parts: [{
+                text: `${ctx.contextText}\n\nPREGUNTA ACTUAL DEL ESTUDIANTE:\n"${question}"\n\nResponde como profesor experto manteniendo la continuidad conversacional:`
+              }]
+            });
+
+            const geminiRes = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(userApiKey.trim())}`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  systemInstruction: { parts: [{ text: systemInstruction }] },
+                  contents: multiTurnContents,
+                  generationConfig: { temperature: 0.35 }
+                })
+              }
+            );
+            if (geminiRes.ok) {
+              const geminiJson = await geminiRes.json();
+              const textResp = geminiJson?.candidates?.[0]?.content?.parts?.[0]?.text;
+              if (textResp) expertAnswer = textResp.trim();
+            }
+          } catch (e) {}
+        }
+      }
+
+      if (!expertAnswer) {
+        expertAnswer = synthesizeProfessorResponse(question, analysis, ctx);
+      }
+
+      const updatedHistory = [
+        ...priorHistory,
+        { role: 'user', content: question },
+        { role: 'assistant', content: expertAnswer }
+      ].slice(-MAX_TUTOR_MEMORY_INTERACTIONS);
+      saveTutorConversationMemory(activeDocument.id, updatedHistory);
+
+      const citationsHtml = cited.map((c) => `<span class="badge">${escapeHtml(c)}</span>`).join('');
+      box.innerHTML += `
+        <div class="chat-msg assistant">
+          ${escapeHtml(expertAnswer)}
+          <div class="chat-citations">
+            <div style="display:flex; gap:0.3rem; flex-wrap:wrap;">${citationsHtml}</div>
+            <button class="btn btn-audio-main" style="padding:0.25rem 0.6rem; font-size:0.7rem;" onclick="speakLatestTutorAnswer()">🔊 Escuchar respuesta</button>
+          </div>
+        </div>
+      `;
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function synthesizeProfessorResponse(question, analysis, ctx) {
+      const topChapter = ctx.relevantChapters[0] || analysis.chapters[0];
+      const topConcept = ctx.relatedConcepts[0] || analysis.keyConcepts[0];
+      const topGlossary = ctx.glossaryTerms[0] || analysis.glossary[0];
+
+      const cleanSentence = (t) => {
+        const s = (t || '').replace(/\s+/g, ' ').trim();
+        return s.endsWith('.') ? s : s + '.';
+      };
+
+      const thesisCore = cleanSentence(analysis.thesis);
+      const chapterCore = topChapter ? cleanSentence(topChapter.summary) : '';
+
+      const introParagraph =
+        ctx.isFollowUp && ctx.resolvedSubject
+          ? `Continuando con ${ctx.resolvedSubject.toLowerCase()}, según el documento su manejo y comprensión parte de reconocer que ${thesisCore.charAt(0).toLowerCase() + thesisCore.slice(1)} El texto destaca que ${chapterCore.charAt(0).toLowerCase() + chapterCore.slice(1)}`
+          : `Según el documento, abordar esta cuestión implica comprender que ${thesisCore.charAt(0).toLowerCase() + thesisCore.slice(1)} En particular, la obra destaca como factor fundamental que ${chapterCore.charAt(0).toLowerCase() + chapterCore.slice(1)}`;
+
+      let explanationParagraph = '';
+      if (topConcept) {
+        explanationParagraph = `Para entenderlo de forma sencilla, el autor profundiza en ${topConcept.name.toLowerCase()}, explicando que ${cleanSentence(topConcept.definition).charAt(0).toLowerCase() + cleanSentence(topConcept.definition).slice(1)}`;
+        if (topGlossary && topGlossary.term.toLowerCase() !== topConcept.name.toLowerCase()) {
+          explanationParagraph += ` Esto se articula directamente con ${topGlossary.term.toLowerCase()}, entendido como ${cleanSentence(topGlossary.definition).charAt(0).toLowerCase() + cleanSentence(topGlossary.definition).slice(1)}`;
+        }
+      }
+
+      const practicalParagraph = topConcept && topConcept.practicalExample
+        ? `Un ejemplo práctico que ilustra cómo aplicarlo es el siguiente: ${cleanSentence(topConcept.practicalExample)}`
+        : '';
+
+      return [introParagraph, explanationParagraph, practicalParagraph].filter(Boolean).join('\n\n');
+    }
+
+    /* =========================================================================
+       🎙️ LECTURA INTELIGENTE AUTOMÁTICA AL CAMBIAR DE SECCIÓN
+       ========================================================================= */
+    function switchSection(sectionId) {
+      currentSectionId = sectionId;
+      document.querySelectorAll('.section-pane').forEach((el) => el.classList.remove('active'));
+      const target = document.getElementById('sec-' + sectionId);
+      if (target) target.classList.add('active');
+
+      document.querySelectorAll('#navList .nav-item').forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-sec') === sectionId);
+      });
+
+      updateSmartSectionReaderBanner();
+    }
+
+    function updateSmartSectionReaderBanner() {
+      const bar = document.getElementById('smartSectionReaderBar');
+      const label = document.getElementById('smartSectionReaderLabel');
+      if (!bar || !label || !activeDocument) return;
+
+      const labelsMap = {
+        resumen: 'Sección activa: Resumen Ejecutivo — Escucha únicamente el contenido visible',
+        capitulos: 'Sección activa: Capítulos del Documento — Escucha los capítulos en voz alta',
+        conceptos: 'Sección activa: Conceptos Clave — Escucha las definiciones y ejemplos prácticos',
+        flashcards: 'Sección activa: Flashcards — Escucha la pregunta y respuesta de la tarjeta visible',
+        glosario: 'Sección activa: Glosario — Escucha los términos técnicos del documento',
+        tutor: 'Sección activa: Tutor IA — Escucha la explicación del Profesor Experto'
+      };
+
+      if (labelsMap[currentSectionId]) {
+        bar.style.display = 'flex';
+        label.textContent = labelsMap[currentSectionId];
+      } else {
+        bar.style.display = 'none';
+      }
+    }
+
+    /* =========================================================================
+       TOUR GUIADO PASO A PASO CON OVERLAY SPOTLIGHT
+       ========================================================================= */
+    function startGuidedTour(stepIndex = 0) {
+      if (!activeDocument && documentsLibrary.length > 0) {
+        selectDocument(documentsLibrary[0].id);
+      }
+      if (!activeDocument) {
+        alert('Primero sube un archivo PDF, DOCX o TXT para iniciar el Tour Guiado sobre tu documento.');
+        return;
+      }
+      currentTourStep = stepIndex;
+      document.getElementById('guidedTourContainer').style.display = 'block';
+      renderTourStep();
+    }
+
+    function renderTourStep() {
+      const step = GUIDED_TOUR_STEPS[currentTourStep];
+      if (!step) return;
+
+      if (step.section) switchSection(step.section);
+
+      setTimeout(() => {
+        const target = document.querySelector(step.selector);
+        const spotlight = document.getElementById('tourSpotlight');
+        const card = document.getElementById('tourCard');
+
+        document.getElementById('tourStepBadge').textContent = `PASO ${currentTourStep + 1} DE ${GUIDED_TOUR_STEPS.length}`;
+        document.getElementById('tourTitle').textContent = step.title;
+        document.getElementById('tourDesc').textContent = step.description;
+        document.getElementById('tourTip').textContent = '💡 ' + step.tip;
+
+        document.getElementById('tourPrevBtn').disabled = currentTourStep === 0;
+        document.getElementById('tourNextBtn').textContent =
+          currentTourStep === GUIDED_TOUR_STEPS.length - 1 ? 'Finalizar Tour ✓' : 'Siguiente →';
+
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const rect = target.getBoundingClientRect();
+          const pad = 8;
+          spotlight.style.top = Math.max(4, rect.top - pad) + 'px';
+          spotlight.style.left = Math.max(4, rect.left - pad) + 'px';
+          spotlight.style.width = (rect.width + pad * 2) + 'px';
+          spotlight.style.height = (rect.height + pad * 2) + 'px';
+
+          const cardTop = rect.bottom + 18 + 250 < window.innerHeight
+            ? rect.bottom + 18
+            : Math.max(16, rect.top - 260);
+          const cardLeft = Math.min(window.innerWidth - 390, Math.max(16, rect.left));
+          card.style.top = cardTop + 'px';
+          card.style.left = cardLeft + 'px';
+        }
+      }, 120);
+    }
+
+    function nextTourStep() {
+      if (currentTourStep < GUIDED_TOUR_STEPS.length - 1) {
+        currentTourStep++;
+        renderTourStep();
+      } else {
+        closeGuidedTour();
+      }
+    }
+
+    function prevTourStep() {
+      if (currentTourStep > 0) {
+        currentTourStep--;
+        renderTourStep();
+      }
+    }
+
+    function closeGuidedTour() {
+      document.getElementById('guidedTourContainer').style.display = 'none';
+      localStorage.setItem(STORAGE_TOUR_DONE, 'true');
+    }
+
+    /* =========================================================================
+       FLASHCARDS, QUIZ, MAPA, COMPARADOR, BÚSQUEDA Y EXPORTACIÓN
+       ========================================================================= */
+    function toggleCourseStep(idx) {
+      completedCourseSteps[idx] = !completedCourseSteps[idx];
+      renderActiveDocument();
+      switchSection('curso');
+    }
+
+    function updateProgressKPI() {
+      if (!activeDocument) return;
+      const total = activeDocument.analysis.chapters.length || 1;
+      const done = Object.values(completedCourseSteps).filter(Boolean).length;
+      const pct = Math.round((done / total) * 100);
+      document.getElementById('kpiProgress').textContent = pct + '%';
+    }
+
+    function renderCurrentFlashcard() {
+      if (!activeDocument) return;
+      const cards = activeDocument.analysis.flashcards || [];
+      if (cards.length === 0) return;
+      const card = cards[currentFlashcardIndex % cards.length];
+      document.getElementById('flashcardCounter').textContent = `${currentFlashcardIndex + 1} / ${cards.length}`;
+      document.getElementById('flashcardSideBadge').textContent = isFlashcardFlipped
+        ? 'RESPUESTA EXPLICATIVA'
+        : 'PREGUNTA (Haz clic para voltear)';
+      document.getElementById('flashcardText').textContent = isFlashcardFlipped ? card.back : card.front;
+    }
+
+    function flipCurrentFlashcard() {
+      isFlashcardFlipped = !isFlashcardFlipped;
+      renderCurrentFlashcard();
+    }
+
+    function nextFlashcard() {
+      if (!activeDocument) return;
+      currentFlashcardIndex = (currentFlashcardIndex + 1) % activeDocument.analysis.flashcards.length;
+      isFlashcardFlipped = false;
+      renderCurrentFlashcard();
+    }
+
+    function prevFlashcard() {
+      if (!activeDocument) return;
+      const len = activeDocument.analysis.flashcards.length;
+      currentFlashcardIndex = (currentFlashcardIndex - 1 + len) % len;
+      isFlashcardFlipped = false;
+      renderCurrentFlashcard();
+    }
+
+    function renderQuizSection(analysis) {
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = analysis.quiz.map((q, qIdx) => {
+        const answered = quizUserAnswers[qIdx];
+        return `
+          <div class="card" style="margin-bottom:0.85rem;">
+            <div class="badge">PREGUNTA ${qIdx + 1}</div>
+            <h4 style="margin:0.45rem 0;">${escapeHtml(q.question)}</h4>
+            ${q.options.map((opt, oIdx) => {
+              let cls = 'quiz-opt';
+              if (answered !== undefined) {
+                if (oIdx === q.correctIndex) cls += ' correct';
+                else if (oIdx === answered) cls += ' wrong';
+              }
+              return `<button class="${cls}" onclick="answerQuiz(${qIdx}, ${oIdx})">${escapeHtml(opt)}</button>`;
+            }).join('')}
+            ${answered !== undefined ? `<p style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.6rem;"><strong>Retroalimentación:</strong> ${escapeHtml(q.explanation)}</p>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function answerQuiz(qIdx, oIdx) {
+      if (!activeDocument) return;
+      quizUserAnswers[qIdx] = oIdx;
+      const quiz = activeDocument.analysis.quiz;
+      let correctCount = 0;
+      quiz.forEach((q, i) => {
+        if (quizUserAnswers[i] === q.correctIndex) correctCount++;
+      });
+      const grade = ((correctCount / Math.max(1, quiz.length)) * 10).toFixed(1);
+      document.getElementById('kpiGrade').textContent = `${grade} / 10`;
+      document.getElementById('quizScoreBadge').textContent = `Calificación: ${grade} / 10`;
+      renderQuizSection(activeDocument.analysis);
+    }
+
+    function filterGlossary(query) {
+      const q = (query || '').toLowerCase().trim();
+      document.querySelectorAll('.glossary-item').forEach((el) => {
+        el.style.display = el.textContent.toLowerCase().includes(q) ? 'block' : 'none';
+      });
+    }
+
+    function renderConceptMapSVG(analysis) {
+      const holder = document.getElementById('conceptMapHolder');
+      const concepts = analysis.keyConcepts.slice(0, 6);
+      const centerTitle = analysis.detectedTopic.slice(0, 28);
+      let nodesSvg = `<rect x="310" y="155" width="220" height="52" rx="12" fill="#2563EB" /><text x="420" y="186" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">${escapeHtml(centerTitle)}</text>`;
+      let linesSvg = '';
+
+      const positions = [
+        [80, 40], [560, 40], [40, 160], [600, 160], [80, 275], [560, 275]
+      ];
+      concepts.forEach((c, i) => {
+        const [x, y] = positions[i];
+        linesSvg += `<line x1="420" y1="181" x2="${x + 90}" y2="${y + 24}" stroke="#7C3AED" stroke-width="2" stroke-dasharray="4 4" />`;
+        nodesSvg += `<rect x="${x}" y="${y}" width="180" height="48" rx="10" fill="#1E293B" stroke="#06B6D4" stroke-width="1.5" /><text x="${x + 90}" y="${y + 29}" text-anchor="middle" fill="#F8FAFC" font-size="12" font-weight="600">${escapeHtml(c.name.slice(0, 22))}</text>`;
+      });
+
+      holder.innerHTML = `<svg viewBox="0 0 840 350" style="width:100%; height:auto; background:var(--bg-primary); border-radius:12px;">${linesSvg}${nodesSvg}</svg>`;
+    }
+
+    function populateComparisonSelectors() {
+      const selA = document.getElementById('compDocA');
+      const selB = document.getElementById('compDocB');
+      if (!selA || !selB) return;
+      const opts = documentsLibrary.map((d) => `<option value="${d.id}">${escapeHtml(d.analysis.documentTitle)}</option>`).join('');
+      selA.innerHTML = opts;
+      selB.innerHTML = opts;
+      if (documentsLibrary.length > 1) selB.selectedIndex = 1;
+      runDocumentComparison();
+    }
+
+    function runDocumentComparison() {
+      const box = document.getElementById('comparisonResult');
+      if (documentsLibrary.length < 1) {
+        box.innerHTML = '<p style="font-size:0.85rem; color:var(--text-secondary);">Sube al menos un documento para comparar.</p>';
+        return;
+      }
+      const idA = document.getElementById('compDocA').value;
+      const idB = document.getElementById('compDocB').value;
+      const docA = documentsLibrary.find((d) => d.id === idA) || documentsLibrary[0];
+      const docB = documentsLibrary.find((d) => d.id === idB) || documentsLibrary[0];
+
+      box.innerHTML = `
+        <div class="grid-2">
+          <div class="card" style="margin-bottom:0;">
+            <span class="badge">DOCUMENTO A</span>
+            <h3 style="margin:0.4rem 0;">${escapeHtml(docA.analysis.documentTitle)}</h3>
+            <p style="font-size:0.84rem;"><strong>Tema:</strong> ${escapeHtml(docA.analysis.detectedTopic)}</p>
+            <p style="font-size:0.84rem; color:var(--text-secondary); margin-top:0.35rem;">${escapeHtml(docA.analysis.thesis)}</p>
+          </div>
+          <div class="card" style="margin-bottom:0;">
+            <span class="badge">DOCUMENTO B</span>
+            <h3 style="margin:0.4rem 0;">${escapeHtml(docB.analysis.documentTitle)}</h3>
+            <p style="font-size:0.84rem;"><strong>Tema:</strong> ${escapeHtml(docB.analysis.detectedTopic)}</p>
+            <p style="font-size:0.84rem; color:var(--text-secondary); margin-top:0.35rem;">${escapeHtml(docB.analysis.thesis)}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function runSemanticSearch(query) {
+      const container = document.getElementById('semanticResults');
+      if (!activeDocument || !query || query.trim().length < 2) {
+        container.innerHTML = '<p style="font-size:0.84rem; color:var(--text-secondary);">Ingresa al menos 2 caracteres para buscar en capítulos, conceptos y glosario.</p>';
+        return;
+      }
+      const q = query.toLowerCase().trim();
+      const matches = [];
+      activeDocument.analysis.chapters.forEach((ch) => {
+        if ((ch.title + ' ' + ch.detailedContent).toLowerCase().includes(q)) {
+          matches.push({ type: 'Capítulo', title: ch.title, text: ch.summary });
+        }
+      });
+      activeDocument.analysis.keyConcepts.forEach((c) => {
+        if ((c.name + ' ' + c.definition).toLowerCase().includes(q)) {
+          matches.push({ type: 'Concepto Clave', title: c.name, text: c.definition });
+        }
+      });
+      container.innerHTML = matches.length === 0
+        ? '<p style="font-size:0.84rem; color:var(--text-secondary);">No se encontraron coincidencias semánticas.</p>'
+        : matches.map((m) => `<div class="card"><span class="badge">${escapeHtml(m.type)}</span><h4 style="margin:0.35rem 0;">${escapeHtml(m.title)}</h4><p style="font-size:0.85rem; color:var(--text-secondary);">${escapeHtml(m.text)}</p></div>`).join('');
+    }
+
+    function openApiKeyModal() {
+      document.getElementById('geminiKeyInput').value = localStorage.getItem(STORAGE_GEMINI_KEY) || '';
+      document.getElementById('apiKeyModal').style.display = 'flex';
+    }
+
+    function closeApiKeyModal() {
+      document.getElementById('apiKeyModal').style.display = 'none';
+    }
+
+    function saveApiKey() {
+      const val = document.getElementById('geminiKeyInput').value.trim();
+      localStorage.setItem(STORAGE_GEMINI_KEY, val);
+      closeApiKeyModal();
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function exportDocumentPDF() {
+      if (!activeDocument || !window.jspdf) return;
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const a = activeDocument.analysis;
+      doc.setFontSize(10);
+      doc.setTextColor(37, 99, 235);
+      doc.text(APP_BRAND_NAME + ' — ' + APP_BRAND_SLOGAN, 14, 14);
+      doc.setTextColor(15, 23, 42);
+      doc.setFontSize(16);
+      doc.text(a.documentTitle, 14, 24);
+      doc.setFontSize(11);
+      doc.text('Tema: ' + a.detectedTopic, 14, 34);
+      const splitThesis = doc.splitTextToSize('Tesis: ' + a.thesis, 180);
+      doc.text(splitThesis, 14, 44);
+      const splitOverview = doc.splitTextToSize(a.overview, 180);
+      doc.text(splitOverview, 14, 66);
+      doc.save(a.documentTitle + '-JAIRRESTAURA-IA-DE-ESTUDIO.pdf');
+    }
+
+    function exportDocumentHTML() {
+      if (!activeDocument) return;
+      const a = activeDocument.analysis;
+      const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>${escapeHtml(a.documentTitle)} — ${APP_BRAND_NAME}</title></head><body style="font-family:sans-serif;max-width:860px;margin:2rem auto;line-height:1.6;"><p style="color:#2563EB;font-weight:bold;">🧠 ${APP_BRAND_NAME} — ${APP_BRAND_SLOGAN}</p><h1>${escapeHtml(a.documentTitle)}</h1><p><strong>Tema:</strong> ${escapeHtml(a.detectedTopic)}</p><p>${escapeHtml(a.overview)}</p></body></html>`;
+      downloadBlob(html, a.documentTitle + '-JAIRRESTAURA-IA-DE-ESTUDIO.html', 'text/html');
+    }
+
+    function exportDocumentWord() {
+      if (!activeDocument) return;
+      const a = activeDocument.analysis;
+      const content = `<html><head><meta charset="utf-8"><title>${escapeHtml(a.documentTitle)} — ${APP_BRAND_NAME}</title></head><body><p style="color:#2563EB;font-weight:bold;">🧠 ${APP_BRAND_NAME} — ${APP_BRAND_SLOGAN}</p><h1>${escapeHtml(a.documentTitle)}</h1><h2>${escapeHtml(a.detectedTopic)}</h2><p>${escapeHtml(a.thesis)}</p><p>${escapeHtml(a.overview)}</p></body></html>`;
+      downloadBlob(content, a.documentTitle + '-JAIRRESTAURA-IA-DE-ESTUDIO.doc', 'application/msword');
+    }
+
+    function exportDocumentMarkdown() {
+      if (!activeDocument) return;
+      const a = activeDocument.analysis;
+      const md = `# ${a.documentTitle} — ${APP_BRAND_NAME}\n> *${APP_BRAND_SLOGAN}*\n\n**Tema:** ${a.detectedTopic}\n\n## Resumen\n${a.overview}\n\n## Capítulos\n` +
+        a.chapters.map((c) => `### ${c.title}\n${c.summary}`).join('\n\n');
+      downloadBlob(md, a.documentTitle + '-JAIRRESTAURA-IA-DE-ESTUDIO.md', 'text/markdown');
+    }
+
+    function exportDocumentTXT() {
+      if (!activeDocument) return;
+      const a = activeDocument.analysis;
+      const txt = `${APP_BRAND_NAME}\n"${APP_BRAND_SLOGAN}"\n\n${a.documentTitle}\nTema: ${a.detectedTopic}\n\n${a.thesis}\n\n${a.overview}`;
+      downloadBlob(txt, a.documentTitle + '-JAIRRESTAURA-IA-DE-ESTUDIO.txt', 'text/plain');
+    }
+
+    function downloadBlob(content, filename, mime) {
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    window.addEventListener('DOMContentLoaded', initIndexedDB);
+  </script>
+</body>
+</html>
